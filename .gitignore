@@ -1,0 +1,29 @@
+# Entorno y Secretos
+.env
+.env.local
+.env.*.local
+
+# Compilación y Salidas (Maven)
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+# Logs
+*.log
+logs.txt
+
+# IDEs y Editores
+.vscode/
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.factorypath
+
+# Sistema Operativo
+.DS_Store
+Thumbs.db
