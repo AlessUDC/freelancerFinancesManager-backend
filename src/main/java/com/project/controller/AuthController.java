@@ -1,26 +1,25 @@
 package com.project.controller;
 
 import com.project.dto.LoginRequest;
+import com.project.dto.LoginResponse;
 import com.project.dto.RegisterRequest;
-import com.project.model.Usuario;
 import com.project.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*") // Para permitir peticiones desde el frontend
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         try {
-            Usuario usuario = authService.registrar(request);
-            return ResponseEntity.ok(usuario);
+            authService.registrar(request);
+            return ResponseEntity.ok("Usuario registrado correctamente");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -29,8 +28,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
-            Usuario usuario = authService.login(request);
-            return ResponseEntity.ok(usuario);
+            LoginResponse response = authService.login(request);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(401).body(e.getMessage());
         }
@@ -46,7 +45,7 @@ public class AuthController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateProfile(@PathVariable Long id, @RequestBody RegisterRequest request) {
+    public ResponseEntity<?> updateProfile(@PathVariable Long id, @RequestBody com.project.dto.UpdateUserRequest request) {
         try {
             return ResponseEntity.ok(authService.actualizar(id, request));
         } catch (Exception e) {

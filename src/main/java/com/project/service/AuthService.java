@@ -1,19 +1,24 @@
 package com.project.service;
 
 import com.project.dto.LoginRequest;
+import com.project.dto.LoginResponse;
 import com.project.dto.RegisterRequest;
 import com.project.model.Usuario;
 import com.project.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.project.security.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public Usuario registrar(RegisterRequest request) {
         if (usuarioRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -23,20 +28,26 @@ public class AuthService {
         Usuario usuario = new Usuario();
         usuario.setNombre(request.getNombre());
         usuario.setEmail(request.getEmail());
-        // Nota: En un entorno real, aquí usaríamos BCrypt para hashear la contraseña
-        usuario.setPassword(request.getPassword()); 
-        
+        usuario.setPassword(passwordEncoder.encode(request.getPassword()));
+
         return usuarioRepository.save(usuario);
     }
 
-    public Usuario login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
         Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(request.getEmail());
 
-        if (usuarioOpt.isPresent() && usuarioOpt.get().getPassword().equals(request.getPassword())) {
-            return usuarioOpt.get();
+        if (usuarioOpt.isEmpty()) {
+            throw new RuntimeException("Credenciales inválidas");
         }
 
-        throw new RuntimeException("Credenciales inválidas");
+        Usuario usuario = usuarioOpt.get();
+        if (!passwordEncoder.matches(request.getPassword(), usuario.getPassword())) {
+            throw new RuntimeException("Credenciales inválidas");
+        }
+
+        String token = jwtTokenProvider.generateToken(usuario.getEmail(), usuario.getId());
+
+        return new LoginResponse(token, usuario.getId(), usuario.getNombre(), usuario.getEmail(), usuario.getRol(), usuario.getMonedaBase(), usuario.getZonaHoraria(), usuario.getPerfilFiscal(), usuario.getAppConfig());
     }
 
     public Usuario obtenerPorId(Long id) {
@@ -45,19 +56,21 @@ public class AuthService {
     }
 
     @jakarta.transaction.Transactional
-    public Usuario actualizar(Long id, RegisterRequest request) {
+    public Usuario actualizar(Long id, com.project.dto.UpdateUserRequest request) {
         Usuario usuario = obtenerPorId(id);
-        
-        System.out.println("Actualizando usuario ID: " + id);
-        System.out.println("Nuevo nombre: " + request.getNombre());
-        
+
         usuario.setNombre(request.getNombre());
         usuario.setEmail(request.getEmail());
         
+        if (request.getMonedaBase() != null) usuario.setMonedaBase(request.getMonedaBase());
+        if (request.getZonaHoraria() != null) usuario.setZonaHoraria(request.getZonaHoraria());
+        if (request.getPerfilFiscal() != null) usuario.setPerfilFiscal(request.getPerfilFiscal());
+        if (request.getAppConfig() != null) usuario.setAppConfig(request.getAppConfig());
+
         if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
-            usuario.setPassword(request.getPassword());
+            usuario.setPassword(passwordEncoder.encode(request.getPassword()));
         }
-        
+
         return usuarioRepository.save(usuario);
     }
 

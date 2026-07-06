@@ -1,11 +1,11 @@
-# 1. Crear .env desde la plantilla
+# Crear .env desde la plantilla
 cp .env.example .env
 # Edita .env con tus credenciales reales
 
-# 2. Levantar base de datos
+# Levantar base de datos y backend
 docker compose up
 
-# O en segundo plano
+# Si deseas puedes levantar el servicio en segundo plano
 docker compose up -d
 
 # Si hiciste cambios en el código Java

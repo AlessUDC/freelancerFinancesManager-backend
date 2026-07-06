@@ -28,10 +28,23 @@ public class Usuario {
     private String email;
 
     @NotBlank
+    @com.fasterxml.jackson.annotation.JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     private String rol = "USER";
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "moneda_base")
+    private String monedaBase = "USD";
+
+    @Column(name = "zona_horaria")
+    private String zonaHoraria = "America/Lima";
+
+    @Embedded
+    private PerfilFiscal perfilFiscal;
+
+    @Embedded
+    private AppConfig appConfig;
 }
