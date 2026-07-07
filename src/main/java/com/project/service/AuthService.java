@@ -26,7 +26,11 @@ public class AuthService {
         }
 
         Usuario usuario = new Usuario();
-        usuario.setNombre(request.getNombre());
+        usuario.setNombres(request.getNombres());
+        usuario.setApellidoPaterno(request.getApellidoPaterno());
+        usuario.setApellidoMaterno(request.getApellidoMaterno());
+        usuario.setTelefono(request.getTelefono());
+        usuario.setFechaNacimiento(request.getFechaNacimiento());
         usuario.setEmail(request.getEmail());
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));
 
@@ -47,7 +51,7 @@ public class AuthService {
 
         String token = jwtTokenProvider.generateToken(usuario.getEmail(), usuario.getId());
 
-        return new LoginResponse(token, usuario.getId(), usuario.getNombre(), usuario.getEmail(), usuario.getRol(), usuario.getMonedaBase(), usuario.getZonaHoraria(), usuario.getPerfilFiscal(), usuario.getAppConfig());
+        return new LoginResponse(token, usuario.getId(), usuario.getNombres(), usuario.getApellidoPaterno(), usuario.getApellidoMaterno(), usuario.getTelefono(), usuario.getFechaNacimiento(), usuario.getCuentaBancaria(), usuario.getEmail(), usuario.getRol(), usuario.getMonedaBase(), usuario.getZonaHoraria(), usuario.getPerfilFiscal(), usuario.getAppConfig());
     }
 
     public Usuario obtenerPorId(Long id) {
@@ -59,7 +63,12 @@ public class AuthService {
     public Usuario actualizar(Long id, com.project.dto.UpdateUserRequest request) {
         Usuario usuario = obtenerPorId(id);
 
-        usuario.setNombre(request.getNombre());
+        usuario.setNombres(request.getNombres());
+        usuario.setApellidoPaterno(request.getApellidoPaterno());
+        usuario.setApellidoMaterno(request.getApellidoMaterno());
+        usuario.setTelefono(request.getTelefono());
+        usuario.setFechaNacimiento(request.getFechaNacimiento());
+        usuario.setCuentaBancaria(request.getCuentaBancaria());
         usuario.setEmail(request.getEmail());
         
         if (request.getMonedaBase() != null) usuario.setMonedaBase(request.getMonedaBase());

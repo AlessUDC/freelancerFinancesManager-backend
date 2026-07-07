@@ -42,6 +42,9 @@ public class Suscripcion {
     @Column(name = "status")
     private String status = "ACTIVA";
 
+    @Column(name = "igv")
+    private BigDecimal igv = BigDecimal.ZERO;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)

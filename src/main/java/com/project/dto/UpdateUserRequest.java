@@ -13,7 +13,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UpdateUserRequest {
     @NotBlank
-    private String nombre;
+    private String nombres;
+    
+    @NotBlank
+    private String apellidoPaterno;
+    
+    @NotBlank
+    private String apellidoMaterno;
+    
+    private String telefono;
+    private java.time.LocalDate fechaNacimiento;
+    private String cuentaBancaria;
 
     @NotBlank
     @Email

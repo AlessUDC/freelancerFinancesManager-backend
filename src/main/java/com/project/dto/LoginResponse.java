@@ -13,7 +13,12 @@ import com.project.model.PerfilFiscal;
 public class LoginResponse {
     private String token;
     private Long id;
-    private String nombre;
+    private String nombres;
+    private String apellidoPaterno;
+    private String apellidoMaterno;
+    private String telefono;
+    private java.time.LocalDate fechaNacimiento;
+    private String cuentaBancaria;
     private String email;
     private String rol;
     

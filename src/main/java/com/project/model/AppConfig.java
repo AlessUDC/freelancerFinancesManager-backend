@@ -22,6 +22,9 @@ public class AppConfig {
     @Column(name = "limite_gastos")
     private BigDecimal limiteGastos = BigDecimal.ZERO;
 
+    @Column(name = "porcentaje_retencion")
+    private BigDecimal porcentajeRetencion = BigDecimal.ZERO;
+
     @Embedded
     private AppAlertas alertas = new AppAlertas();
 }

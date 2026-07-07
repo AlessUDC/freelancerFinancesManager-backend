@@ -48,6 +48,9 @@ public class Gasto {
     @Column(name = "fecha")
     private LocalDate fecha = LocalDate.now();
 
+    @Column(name = "igv")
+    private BigDecimal igv = BigDecimal.ZERO;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)

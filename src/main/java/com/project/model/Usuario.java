@@ -20,7 +20,24 @@ public class Usuario {
     private Long id;
 
     @NotBlank
-    private String nombre;
+    private String nombres;
+
+    @NotBlank
+    @Column(name = "apellido_paterno")
+    private String apellidoPaterno;
+
+    @NotBlank
+    @Column(name = "apellido_materno")
+    private String apellidoMaterno;
+
+    @Column(name = "telefono")
+    private String telefono;
+
+    @Column(name = "fecha_nacimiento")
+    private java.time.LocalDate fechaNacimiento;
+
+    @Column(name = "cuenta_bancaria")
+    private String cuentaBancaria;
 
     @NotBlank
     @Email

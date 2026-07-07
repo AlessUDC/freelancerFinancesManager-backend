@@ -30,4 +30,6 @@ public class GastoRequest {
 
     @NotNull
     private Long usuarioId;
+
+    private BigDecimal igv;
 }
