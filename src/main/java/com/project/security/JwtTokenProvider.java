@@ -2,6 +2,7 @@ package com.project.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -11,11 +12,20 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    // A secure 256-bit key for HMAC-SHA
-    private final Key key = Keys.hmacShaKeyFor("9a62a98e82b7cf533b6bdedea9999a0123456789abcdef0123456789abcdef012".getBytes());
+    /** Clave secreta JWT — se inyecta desde application.properties / variable de entorno JWT_SECRET.
+     *  Nunca se almacena directamente en el código fuente. */
+    @Value("${app.jwt.secret}")
+    private String jwtSecret;
 
-    @Value("${app.jwt.expiration-ms:86400000}") // 24 hours default
+    @Value("${app.jwt.expiration-ms:86400000}") // 24 horas por defecto
     private long jwtExpirationMs;
+
+    private Key key;
+
+    @PostConstruct
+    private void init() {
+        this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+    }
 
     public String generateToken(String email, Long userId) {
         Date now = new Date();
@@ -60,3 +70,4 @@ public class JwtTokenProvider {
         return false;
     }
 }
+

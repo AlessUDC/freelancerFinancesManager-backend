@@ -6,6 +6,7 @@ import com.project.model.Usuario;
 import com.project.repository.IngresoRepository;
 import com.project.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -41,9 +42,14 @@ public class IngresoService {
         return ingresoRepository.save(ingreso);
     }
 
-    public Ingreso update(Long id, IngresoRequest request) {
+    public Ingreso update(Long id, IngresoRequest request, Long requestingUserId) {
         Ingreso ingreso = ingresoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ingreso no encontrado con ID: " + id));
+
+        // Verificar que el ingreso pertenece al usuario autenticado
+        if (!ingreso.getUsuario().getId().equals(requestingUserId)) {
+            throw new AccessDeniedException("No tienes permiso para modificar este ingreso");
+        }
 
         ingreso.setProyectoNombre(request.getProyectoNombre());
         ingreso.setMontoBruto(request.getMontoBruto());
@@ -58,16 +64,29 @@ public class IngresoService {
         return ingresoRepository.save(ingreso);
     }
 
-    public void delete(Long id) {
+    public void delete(Long id, Long requestingUserId) {
         Ingreso ingreso = ingresoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ingreso no encontrado con ID: " + id));
+
+        // Verificar que el ingreso pertenece al usuario autenticado
+        if (!ingreso.getUsuario().getId().equals(requestingUserId)) {
+            throw new AccessDeniedException("No tienes permiso para eliminar este ingreso");
+        }
+
         ingresoRepository.delete(ingreso);
     }
 
-    public Ingreso updateStatus(Long id, String status) {
+    public Ingreso updateStatus(Long id, String status, Long requestingUserId) {
         Ingreso ingreso = ingresoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ingreso no encontrado con ID: " + id));
+
+        // Verificar que el ingreso pertenece al usuario autenticado
+        if (!ingreso.getUsuario().getId().equals(requestingUserId)) {
+            throw new AccessDeniedException("No tienes permiso para modificar el estado de este ingreso");
+        }
+
         ingreso.setStatus(status);
         return ingresoRepository.save(ingreso);
     }
 }
+

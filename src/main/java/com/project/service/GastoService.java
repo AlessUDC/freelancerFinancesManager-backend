@@ -6,6 +6,7 @@ import com.project.model.Usuario;
 import com.project.repository.GastoRepository;
 import com.project.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,9 +40,14 @@ public class GastoService {
         return gastoRepository.save(gasto);
     }
 
-    public Gasto update(Long id, GastoRequest request) {
+    public Gasto update(Long id, GastoRequest request, Long requestingUserId) {
         Gasto gasto = gastoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Gasto no encontrado con ID: " + id));
+
+        // Verificar que el gasto pertenece al usuario autenticado
+        if (!gasto.getUsuario().getId().equals(requestingUserId)) {
+            throw new AccessDeniedException("No tienes permiso para modificar este gasto");
+        }
 
         gasto.setConcepto(request.getConcepto());
         gasto.setMonto(request.getMonto());
@@ -55,9 +61,16 @@ public class GastoService {
         return gastoRepository.save(gasto);
     }
 
-    public void delete(Long id) {
+    public void delete(Long id, Long requestingUserId) {
         Gasto gasto = gastoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Gasto no encontrado con ID: " + id));
+
+        // Verificar que el gasto pertenece al usuario autenticado
+        if (!gasto.getUsuario().getId().equals(requestingUserId)) {
+            throw new AccessDeniedException("No tienes permiso para eliminar este gasto");
+        }
+
         gastoRepository.delete(gasto);
     }
 }
+

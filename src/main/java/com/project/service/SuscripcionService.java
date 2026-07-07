@@ -6,6 +6,7 @@ import com.project.model.Usuario;
 import com.project.repository.SuscripcionRepository;
 import com.project.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,9 +38,14 @@ public class SuscripcionService {
         return suscripcionRepository.save(suscripcion);
     }
 
-    public Suscripcion update(Long id, SuscripcionRequest request) {
+    public Suscripcion update(Long id, SuscripcionRequest request, Long requestingUserId) {
         Suscripcion suscripcion = suscripcionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Suscripción no encontrada con ID: " + id));
+
+        // Verificar que la suscripción pertenece al usuario autenticado
+        if (!suscripcion.getUsuario().getId().equals(requestingUserId)) {
+            throw new AccessDeniedException("No tienes permiso para modificar esta suscripción");
+        }
 
         if (request.getServicio() != null) suscripcion.setServicio(request.getServicio());
         if (request.getMonto() != null) suscripcion.setMonto(request.getMonto());
@@ -51,9 +57,16 @@ public class SuscripcionService {
         return suscripcionRepository.save(suscripcion);
     }
 
-    public void delete(Long id) {
+    public void delete(Long id, Long requestingUserId) {
         Suscripcion suscripcion = suscripcionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Suscripción no encontrada con ID: " + id));
+
+        // Verificar que la suscripción pertenece al usuario autenticado
+        if (!suscripcion.getUsuario().getId().equals(requestingUserId)) {
+            throw new AccessDeniedException("No tienes permiso para eliminar esta suscripción");
+        }
+
         suscripcionRepository.delete(suscripcion);
     }
 }
+

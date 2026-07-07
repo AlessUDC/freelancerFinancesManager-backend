@@ -7,14 +7,21 @@ CREATE TABLE IF NOT EXISTS categorias (
 );
 
 -- Tabla de Usuarios
+-- Sincronizado con la entidad JPA Usuario.java
 CREATE TABLE IF NOT EXISTS usuarios (
     id SERIAL PRIMARY KEY,
+    nombres VARCHAR(100) NOT NULL,
+    apellido_paterno VARCHAR(100) NOT NULL,
+    apellido_materno VARCHAR(100) NOT NULL,
     nombre VARCHAR(100),
+    telefono VARCHAR(30),
+    fecha_nacimiento DATE,
+    cuenta_bancaria VARCHAR(100),
     email VARCHAR(150) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     rol VARCHAR(50) DEFAULT 'USER',
-    moneda_base VARCHAR(10),
-    zona_horaria VARCHAR(100),
+    moneda_base VARCHAR(10) DEFAULT 'USD',
+    zona_horaria VARCHAR(100) DEFAULT 'America/Lima',
     porcentaje_impuesto DECIMAL(5, 2),
     meta_ingreso_mensual DECIMAL(10, 2),
     limite_gastos DECIMAL(10, 2),
@@ -71,7 +78,12 @@ CREATE TABLE IF NOT EXISTS gastos (
 -- Inserts iniciales
 INSERT INTO categorias (nombre) VALUES ('TECNOLOGIA_SAAS'), ('SERVICIOS_PUBLICOS_CONECTIVIDAD'), ('COWORKING'), ('EDUCACION_CAPACITACION'), ('IMPUESTOS_LEGAL'), ('PERSONAL') ON CONFLICT DO NOTHING;
 
--- Seed data
+-- Seed data (usuario de prueba — password: "test1234" encriptada con BCrypt)
+INSERT INTO usuarios (nombres, apellido_paterno, apellido_materno, email, password, rol)
+VALUES ('Juan', 'Perez', 'Lopez', 'admin@test.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'USER')
+ON CONFLICT DO NOTHING;
+
 INSERT INTO ingresos (proyecto_nombre, monto_bruto, retencion, monto_neto, moneda, status, fecha, fecha_emision, fecha_vencimiento, usuario_id) VALUES ('Desarrollo Web App', 1500.00, 150.00, 1350.00, 'USD', 'PAGADO', '2026-07-01', '2026-06-01', '2026-07-01', 1) ON CONFLICT DO NOTHING;
 INSERT INTO gastos (concepto, monto, moneda, categoria, es_deducible, es_recurrente, cantidad, fecha, usuario_id) VALUES ('Hosting AWS', 50.00, 'USD', 'TECNOLOGIA_SAAS', true, true, 1, '2026-07-05', 1) ON CONFLICT DO NOTHING;
 INSERT INTO suscripciones (servicio, categoria, monto, moneda, ciclo, proxima_renovacion, status, usuario_id) VALUES ('GitHub Copilot', 'TECNOLOGIA_SAAS', 10.00, 'USD', 'MENSUAL', '2026-08-01', 'ACTIVA', 1) ON CONFLICT DO NOTHING;
+

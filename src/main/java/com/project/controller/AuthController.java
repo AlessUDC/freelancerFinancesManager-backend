@@ -3,8 +3,10 @@ package com.project.controller;
 import com.project.dto.LoginRequest;
 import com.project.dto.LoginResponse;
 import com.project.dto.RegisterRequest;
+import com.project.security.SecurityUtils;
 import com.project.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +39,11 @@ public class AuthController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getProfile(@PathVariable Long id) {
+        // Verificar que el usuario solo puede ver su propio perfil
+        if (!id.equals(SecurityUtils.getCurrentUserId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("No tienes permiso para ver el perfil de otro usuario");
+        }
         try {
             return ResponseEntity.ok(authService.obtenerPorId(id));
         } catch (Exception e) {
@@ -46,6 +53,11 @@ public class AuthController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProfile(@PathVariable Long id, @RequestBody com.project.dto.UpdateUserRequest request) {
+        // Verificar que el usuario solo puede actualizar su propio perfil
+        if (!id.equals(SecurityUtils.getCurrentUserId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("No tienes permiso para modificar el perfil de otro usuario");
+        }
         try {
             return ResponseEntity.ok(authService.actualizar(id, request));
         } catch (Exception e) {
@@ -55,6 +67,11 @@ public class AuthController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAccount(@PathVariable Long id) {
+        // Verificar que el usuario solo puede eliminar su propia cuenta
+        if (!id.equals(SecurityUtils.getCurrentUserId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("No tienes permiso para eliminar la cuenta de otro usuario");
+        }
         try {
             authService.eliminar(id);
             return ResponseEntity.ok("Cuenta eliminada exitosamente");
@@ -63,3 +80,4 @@ public class AuthController {
         }
     }
 }
+
