@@ -77,8 +77,6 @@ CREATE TABLE IF NOT EXISTS gastos (
 
 -- Inserts iniciales
 INSERT INTO categorias (nombre) VALUES ('TECNOLOGIA_SAAS'), ('SERVICIOS_PUBLICOS_CONECTIVIDAD'), ('COWORKING'), ('EDUCACION_CAPACITACION'), ('IMPUESTOS_LEGAL'), ('PERSONAL') ON CONFLICT DO NOTHING;
-
--- Seed data (usuario de prueba — password: "test1234" encriptada con BCrypt)
 INSERT INTO usuarios (nombres, apellido_paterno, apellido_materno, email, password, rol)
 VALUES ('Juan', 'Perez', 'Lopez', 'admin@test.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'USER')
 ON CONFLICT DO NOTHING;

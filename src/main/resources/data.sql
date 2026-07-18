@@ -1,7 +1,5 @@
 -- =============================================================================
 --  SEED DATA  ·  Ejecutado automáticamente por Spring Boot en cada arranque
---  Todas las sentencias son idempotentes (ON CONFLICT / WHERE NOT EXISTS)
---  Contraseña de los 3 usuarios de prueba: "test1234"
 -- =============================================================================
 
 -- ── Categorías ────────────────────────────────────────────────────────────────
